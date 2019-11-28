@@ -5,7 +5,7 @@ import {Observable, Subject, throwError} from 'rxjs';
 import {environment} from '../../../../environments/environment';
 import {catchError, tap} from 'rxjs/operators';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 
 export class AuthService {
   public  error$: Subject<string> = new Subject<string>();
@@ -13,12 +13,12 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   get token(): string {
-    const expDate = new Date(localStorage.getItem('fb-expires'))
+    const expDate = new Date(localStorage.getItem('fb-expires'));
     if (new Date() > expDate) {
       this.logout();
       return null;
     }
-   return localStorage.getItem('fb-token');
+    return localStorage.getItem('fb-token');
   }
 
   login(user: User): Observable<any> {
@@ -42,16 +42,16 @@ export class AuthService {
     const {message} = error.error.error;
     switch (message) {
       case 'EMAIL_NOT_FOUND':
-        this.error$.next('Такого email нет')
+        this.error$.next('Такого email нет');
         break;
       case 'INVALID_EMAIL':
-         this.error$.next('Неверный email')
-        break;
+         this.error$.next('Неверный email');
+         break;
       case 'INVALID_PASSWORD':
-         this.error$.next('Неверный пароль')
-        break;
+         this.error$.next('Неверный пароль');
+         break;
     }
-    return throwError(error)
+    return throwError(error);
   }
 
   private setToken(res: FirebaseAuthResponse | null) {
@@ -59,12 +59,12 @@ export class AuthService {
 
       const expDate = new Date(new Date().getTime() + +res.expiresIn * 1000);
 
-      localStorage.setItem('fb-token', res.idToken)
+      localStorage.setItem('fb-token', res.idToken);
       localStorage.setItem('fb-expires', expDate.toString());
     } else {
-      localStorage.clear()
+      localStorage.clear();
     }
-
-
   }
 }
+
+// 13 защита роутов
