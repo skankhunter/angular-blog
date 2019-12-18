@@ -25,8 +25,16 @@ main {
   box-sizing: border-box;
 }
 
+.panel__item-wrapper {
+  position: relative;
+
+  &:hover .panel__item-tooltip {
+    background: cornflowerblue;
+    left: 50px;
+  }
+}
+
 .panel__item {
-  box-sizing: border-box;
   width: 100%;
   max-height: 50px;
   height: 100%;
@@ -36,4 +44,16 @@ main {
   &:hover {
     background: cornflowerblue;
   }
+}
+
+.panel__item-tooltip {
+  position: absolute;
+  font-size: 12px;
+  color: #ffffff;
+  top: 0;
+  left: 0;
+  min-width: 70px;
+  padding: 16px 15px;
+  background: blue;
+  transition: 0.3s;
 }

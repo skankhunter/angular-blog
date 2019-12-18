@@ -1,16 +1,17 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {FirebaseAuthResponse, User} from '../../../shared/interfaces/interfaces';
-import {Observable, Subject, throwError} from 'rxjs';
-import {environment} from '../../../../environments/environment';
+import {Observable, Subject, throwError, from} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
+import {Firebase} from '../../../Firebase/firebase.service';
+import {environment} from '../../../../environments/environment';
 
 @Injectable({providedIn: 'root'})
 
 export class AuthService {
   public  error$: Subject<string> = new Subject<string>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private firebase: Firebase) {}
 
   get token(): string {
     const expDate = new Date(localStorage.getItem('fb-expires'));
@@ -23,6 +24,12 @@ export class AuthService {
 
   login(user: User): Observable<any> {
     user.returnSecureToken = true;
+
+    // return from(this.firebase.doSignInWithEmailAndPassword(user.email, user.password))
+    //   .pipe(
+    //     tap(this.setToken),
+    //     catchError(this.handleError.bind(this))
+    //   );
     return this.http.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.apiKey}`, user)
       .pipe(
         tap(this.setToken),
@@ -56,7 +63,6 @@ export class AuthService {
 
   private setToken(res: FirebaseAuthResponse | null) {
     if (res) {
-
       const expDate = new Date(new Date().getTime() + +res.expiresIn * 1000);
 
       localStorage.setItem('fb-token', res.idToken);
@@ -66,5 +72,3 @@ export class AuthService {
     }
   }
 }
-
-// 13 защита роутов
